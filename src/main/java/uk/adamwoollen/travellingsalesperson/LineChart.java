@@ -4,59 +4,80 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.DefaultXYDataset;
-import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.Timer;
 
 public class LineChart
 {
-    private List<Long> times = new ArrayList<>();
-    private List<Double> bestSolutions = new ArrayList<>();
+    private Map<String, GraphSeriesData> graphData = new HashMap<>();
+    private JFrame frame;
 
-    public void addData(long time, double bestSolution)
+    public LineChart()
     {
-        times.add(time);
-        bestSolutions.add(bestSolution);
+        frame = new JFrame();
+        frame.setSize(600, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+        Timer chartUpdateTimer = new Timer();
+        chartUpdateTimer.schedule(new UpdateChart(), 0, 1000);
     }
 
-    public void showChart()
+    public void addData(String solutionName, long time, double bestSolution)
     {
-        XYDataset dataset = createDataset();
-        JFreeChart lineChart = ChartFactory.createXYLineChart("Best Solution Over Time", "Time / ms", "Best Solution", dataset, PlotOrientation.VERTICAL, true, true, false);
+        if (!graphData.containsKey(solutionName))
+        {
+            graphData.put(solutionName, new GraphSeriesData(solutionName));
+        }
+        GraphSeriesData graphSeriesData = graphData.get(solutionName);
+        graphSeriesData.times.add(time);
+        graphSeriesData.bestSolutions.add(bestSolution);
+    }
 
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Charts");
+    private class UpdateChart extends TimerTask
+    {
+        @Override
+        public void run()
+        {
+            XYSeriesCollection dataset = new XYSeriesCollection();
+            for (GraphSeriesData graphSeriesData : graphData.values())
+            {
+                dataset.addSeries(graphSeriesData.getDataset());
+            }
 
-            frame.setSize(600, 400);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
+            JFreeChart lineChart = ChartFactory.createXYLineChart("Best Solution Over Time", "Time / ms", "Best Solution", dataset, PlotOrientation.VERTICAL, true, true, false);
 
             ChartPanel chartPanel = new ChartPanel(lineChart);
-
-            frame.getContentPane().add(chartPanel);
-        });
+            frame.add(chartPanel);
+            frame.revalidate();
+        }
     }
 
-    private XYDataset createDataset()
+    private class GraphSeriesData
     {
-        DefaultXYDataset dataset = new DefaultXYDataset();
-//        double[][] data = { {0.1, 0.2, 0.3}, {1, 2, 3} };
+        public String solutionName;
+        public List<Long> times = new ArrayList<>();
+        public List<Double> bestSolutions = new ArrayList<>();
 
-        double[][] data = new double[2][times.size()];
-        for (int i = 0; i < times.size(); i++)
+        public GraphSeriesData(String solutionName)
         {
-            data[0][i] = times.get(i);
-        }
-        for (int i = 0; i < bestSolutions.size(); i++)
-        {
-            data[1][i] = bestSolutions.get(i);
+            this.solutionName = solutionName;
         }
 
-        dataset.addSeries("series1", data);
+        public XYSeries getDataset()
+        {
+            XYSeries series = new XYSeries(solutionName);
 
-        return dataset;
+            for (int i = 0; i < times.size(); i++)
+            {
+                series.add(times.get(i), bestSolutions.get(i));
+            }
+
+            return series;
+        }
     }
 }

@@ -13,51 +13,25 @@ public class Main {
 	
 	private double[][] graph;
 	private int[] route;
+	private LineChart lineChart;
 	
-	public Main()
+	private Main()
 	{
 		long startTime = System.nanoTime();
-		LineChart lineChart = new LineChart();
+
+		lineChart = new LineChart();
+
 		GraphBuilder gb = new GraphBuilder();
 		graph = gb.buildGraphFromCsv("ulysses16.csv");
-//		graph = gb.buildExampleGraph();
-		
-		route = new int[graph.length];
 		
 		System.out.println("Calculating, please wait...");
-		
-		int[] cheapestRoute = null;
-		double cheapestRouteCost = Double.MAX_VALUE;
-		for(int i = 0; i < 10000000; i++)
-		{
-			route = getRandomRoute();
-			double routeCost = getRouteCost();
-			// Uncommenting the two lines below will dramatically increase
-			// program run time for large data sets and number of iterations.
-//			printRoute(route);
-//			System.out.println(routeCost);
-			
-			if(routeCost < cheapestRouteCost)
-			{
-				cheapestRouteCost = routeCost;
-				cheapestRoute = route;
-				long timeElapsed = ((System.nanoTime() - startTime) / 1000000);
-				System.out.println(timeElapsed + ", " + routeCost);
-				lineChart.addData(timeElapsed, routeCost);
-			}
-		}
-		
-		System.out.println("===================");
-		System.out.println("CHEAPEST ROUTE");
-		printRoute(cheapestRoute);
-		System.out.println(cheapestRouteCost);
 
-		lineChart.showChart();
-		
+		solveUsingRandom();
+
 		System.out.println("Total time to execute program: " + ((System.nanoTime() - startTime) / 1000000) + " milliseconds");
 	}
 	
-	public double getRouteCost()
+	private double getRouteCost()
 	{
 		double cost = 0;
 		for (int i = 0; i < route.length - 1; i++) {
@@ -66,7 +40,7 @@ public class Main {
 		return cost;
 	}
 	
-	public int[] getRandomRoute()
+	private int[] getRandomRoute()
 	{
 		ArrayList<Integer> nodes = new ArrayList<Integer>();
 		for(int i = 0; i < graph.length; i++)
@@ -85,7 +59,7 @@ public class Main {
 		return route;
 	}
 	
-	public void printRoute(int[] route)
+	private void printRoute(int[] route)
 	{
 		StringJoiner sj = new StringJoiner(" -> ");
 		for(int i = 0; i < route.length; i++)
@@ -93,5 +67,31 @@ public class Main {
 			sj.add(String.valueOf(route[i]));
 		}
 		System.out.println(sj.toString());
+	}
+
+	private void solveUsingRandom()
+	{
+		long startTime = System.nanoTime();
+
+		int[] cheapestRoute = null;
+		double cheapestRouteCost = Double.MAX_VALUE;
+		for(int i = 0; i < 100000; i++)
+		{
+			route = getRandomRoute();
+			double routeCost = getRouteCost();
+
+			if(routeCost < cheapestRouteCost)
+			{
+				cheapestRouteCost = routeCost;
+				cheapestRoute = route;
+				long timeElapsed = ((System.nanoTime() - startTime) / 1000000);
+				lineChart.addData("random", timeElapsed, routeCost);
+			}
+		}
+
+		System.out.println("===================");
+		System.out.println("CHEAPEST ROUTE");
+		printRoute(cheapestRoute);
+		System.out.println(cheapestRouteCost);
 	}
 }
