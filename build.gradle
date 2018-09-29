@@ -1,0 +1,21 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+mainClassName = 'uk.adamwoollen.travellingsalesperson.Main'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/jfree/jfreechart
+    compile group: 'jfree', name: 'jfreechart', version: '1.0.13'
+    testCompile "junit:junit:4.12"
+}
+
+jar {
+    baseName = 'travelling-sales-person'
+    version =  '1.0'
+}
