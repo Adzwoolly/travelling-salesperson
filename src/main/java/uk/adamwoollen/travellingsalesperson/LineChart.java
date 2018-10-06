@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.util.*;
 import java.util.Timer;
 
-public class LineChart
+public class LineChart implements SolutionLog
 {
     private Map<String, GraphSeriesData> graphData = new HashMap<>();
     private JFrame frame;
@@ -27,7 +27,7 @@ public class LineChart
         chartUpdateTimer.schedule(new UpdateChart(), 0, 1000);
     }
 
-    public void addData(String solutionName, long time, double bestSolution)
+    public void logSolution(String solutionName, long time, double bestSolutionDistance)
     {
         if (!graphData.containsKey(solutionName))
         {
@@ -35,7 +35,7 @@ public class LineChart
         }
         GraphSeriesData graphSeriesData = graphData.get(solutionName);
         graphSeriesData.times.add(time);
-        graphSeriesData.bestSolutions.add(bestSolution);
+        graphSeriesData.bestSolutions.add(bestSolutionDistance);
     }
 
     private class UpdateChart extends TimerTask
