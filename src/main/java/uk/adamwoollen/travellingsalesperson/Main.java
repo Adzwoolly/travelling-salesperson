@@ -29,10 +29,11 @@ public class Main {
 		
 		System.out.println("Calculating, please wait...");
 
-		int[] bestRouteFound = Random.solveUsingRandom(graph, new LineChart());
+		int[] bestRouteFound = Random.solveUsingRandom(graph, new LineChart(), 10);
 
 		System.out.println("===================");
 		System.out.println("CHEAPEST ROUTE");
+
 		Main.printRoute(bestRouteFound);
 		System.out.println(getRouteCost(graph, bestRouteFound));
 

@@ -27,13 +27,14 @@ public class Random
         return route;
     }
 
-    public static int[] solveUsingRandom(double[][] graph, SolutionLog solutionLog)
+    public static int[] solveUsingRandom(double[][] graph, SolutionLog solutionLog, int secondsToRunFor)
     {
         long startTime = System.nanoTime();
+        long endTime = startTime + (secondsToRunFor * 1000000000L);
 
         int[] cheapestRoute = null;
         double cheapestRouteCost = Double.MAX_VALUE;
-        for(int i = 0; i < 100000; i++)
+        while(System.nanoTime() < endTime)
         {
             int[] route = getRandomRoute(graph.length);
             double routeCost = Main.getRouteCost(graph, route);
