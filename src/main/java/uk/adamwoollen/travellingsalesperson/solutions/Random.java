@@ -15,15 +15,12 @@ public class Random
         {
             nodes.add(i);
         }
-        int[] route = new int[nodes.size() + 1];
-        route[0] = nodes.remove(0);
-        // First and last nodes both set to 0 for a complete loop
-        for(int i = 1; i < route.length - 1; i++)
+        int[] route = new int[nodes.size()];
+        for(int i = 0; i < route.length; i++)
         {
             int randomNode = ThreadLocalRandom.current().nextInt(0, nodes.size());
             route[i] = nodes.remove(randomNode);
         }
-        route[route.length - 1] = route[0];
         return route;
     }
 

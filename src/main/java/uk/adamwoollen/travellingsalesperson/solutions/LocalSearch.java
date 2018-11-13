@@ -66,18 +66,10 @@ public class LocalSearch
         {
             for (int j = 0; j < route.length; j++)
             {
-                twoOptNetwork.add(switchNodes(route, i, j));
+                twoOptNetwork.add(Main.switchNodes(route, i, j));
             }
         }
         return twoOptNetwork;
     }
 
-    private static int[] switchNodes(int[] route, int firstNode, int secondNode)
-    {
-        int[] newRoute = route.clone();
-        int tempNode = newRoute[firstNode];
-        newRoute[firstNode] = newRoute[secondNode];
-        newRoute[secondNode] = tempNode;
-        return newRoute;
-    }
 }

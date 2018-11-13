@@ -1,5 +1,6 @@
 package uk.adamwoollen.travellingsalesperson;
 
+import uk.adamwoollen.travellingsalesperson.solutions.Evolution;
 import uk.adamwoollen.travellingsalesperson.solutions.LocalSearch;
 import uk.adamwoollen.travellingsalesperson.solutions.Random;
 
@@ -20,6 +21,8 @@ public class Main
 		{
 			cost += graph[route[i]][route[i + 1]];
 		}
+
+		cost += graph[route[route.length - 1]][route[0]];
 		return cost;
 	}
 	
@@ -34,9 +37,19 @@ public class Main
 		
 		System.out.println("Calculating, please wait...");
 
-		int[] bestRouteFound = Random.solveUsingRandom(graph, lineChart, 10);
-		double bestRouteFoundCost = getRouteCost(graph, bestRouteFound);
-		String bestRouteFoundSolutionName = "Random";
+		int[] bestRouteFound = null;
+		double bestRouteFoundCost = Double.MAX_VALUE;
+		String bestRouteFoundSolutionName = "N/A - nothing returned lower than Double.MAX_VALUE";
+
+
+		int[] randomRouteFound = Random.solveUsingRandom(graph, lineChart, 10);
+		double randomRouteFoundCost = getRouteCost(graph, randomRouteFound);
+		if (randomRouteFoundCost < bestRouteFoundCost)
+		{
+			bestRouteFound = randomRouteFound;
+			bestRouteFoundCost = randomRouteFoundCost;
+			bestRouteFoundSolutionName = "Random";
+		}
 
 		int[] localSearchRouteFound = LocalSearch.solveUsingLocalSearch(graph, lineChart, 10);
 		double localSearchRouteFoundCost = getRouteCost(graph, localSearchRouteFound);
@@ -47,6 +60,19 @@ public class Main
 			bestRouteFoundSolutionName = "Local Search";
 		}
 
+		int[] evolutionRouteFound = Evolution.solveUsingEvolution(graph, lineChart, 10);
+		double evolutionRouteFoundCost = getRouteCost(graph, evolutionRouteFound);
+		if (evolutionRouteFoundCost < bestRouteFoundCost)
+		{
+			bestRouteFound = evolutionRouteFound;
+			bestRouteFoundCost = evolutionRouteFoundCost;
+			bestRouteFoundSolutionName = "Evolution";
+		}
+
+		System.out.println("===================");
+		System.out.println("Random found: " + randomRouteFoundCost);
+		System.out.println("Local search found: " + localSearchRouteFoundCost);
+		System.out.println("Evolution found: " + evolutionRouteFoundCost);
 		System.out.println("===================");
 		System.out.println("CHEAPEST ROUTE");
 
@@ -64,5 +90,14 @@ public class Main
 			sj.add(String.valueOf(node));
 		}
 		System.out.println(sj.toString());
+	}
+
+	public static int[] switchNodes(int[] route, int firstNode, int secondNode)
+	{
+		int[] newRoute = route.clone();
+		int tempNode = newRoute[firstNode];
+		newRoute[firstNode] = newRoute[secondNode];
+		newRoute[secondNode] = tempNode;
+		return newRoute;
 	}
 }
