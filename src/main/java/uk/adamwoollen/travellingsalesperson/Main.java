@@ -29,6 +29,7 @@ public class Main
 	private Main()
 	{
 		long startTime = System.nanoTime();
+		final int secondsToRunSolutionsFor = 10;
 
 		GraphBuilder gb = new GraphBuilder();
 		double[][] graph = gb.buildGraphFromCsv("ulysses16.csv");
@@ -42,7 +43,7 @@ public class Main
 		String bestRouteFoundSolutionName = "N/A - nothing returned lower than Double.MAX_VALUE";
 
 
-		int[] randomRouteFound = Random.solveUsingRandom(graph, lineChart, 10);
+		int[] randomRouteFound = Random.solveUsingRandom(graph, lineChart, secondsToRunSolutionsFor);
 		double randomRouteFoundCost = getRouteCost(graph, randomRouteFound);
 		if (randomRouteFoundCost < bestRouteFoundCost)
 		{
@@ -51,7 +52,7 @@ public class Main
 			bestRouteFoundSolutionName = "Random";
 		}
 
-		int[] localSearchRouteFound = LocalSearch.solveUsingLocalSearch(graph, lineChart, 10);
+		int[] localSearchRouteFound = LocalSearch.solveUsingLocalSearch(graph, lineChart, secondsToRunSolutionsFor);
 		double localSearchRouteFoundCost = getRouteCost(graph, localSearchRouteFound);
 		if (localSearchRouteFoundCost < bestRouteFoundCost)
 		{
@@ -60,7 +61,7 @@ public class Main
 			bestRouteFoundSolutionName = "Local Search";
 		}
 
-		int[] evolutionRouteFound = Evolution.solveUsingEvolution(graph, lineChart, 10);
+		int[] evolutionRouteFound = Evolution.solveUsingEvolution(graph, lineChart, secondsToRunSolutionsFor);
 		double evolutionRouteFoundCost = getRouteCost(graph, evolutionRouteFound);
 		if (evolutionRouteFoundCost < bestRouteFoundCost)
 		{

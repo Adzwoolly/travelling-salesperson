@@ -33,3 +33,4 @@ local.properties
 # Stuff
 build/
 .gradle/
+out/

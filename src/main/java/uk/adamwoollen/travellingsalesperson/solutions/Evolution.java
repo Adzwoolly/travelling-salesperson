@@ -1,14 +1,11 @@
 package uk.adamwoollen.travellingsalesperson.solutions;
 
-import uk.adamwoollen.travellingsalesperson.LineChart;
 import uk.adamwoollen.travellingsalesperson.Main;
 import uk.adamwoollen.travellingsalesperson.SolutionLog;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static uk.adamwoollen.travellingsalesperson.solutions.Random.getRandomRoute;
@@ -20,7 +17,8 @@ public class Evolution
         long startTime = System.nanoTime();
         long endTime = startTime + (secondsToRunFor * 1000000000L);
 
-        int populationSize = 1000;
+        final int populationSize = 1000;
+        final double mutationProbability = 0.7;
 
         int[][] population = Stream.generate(() -> getRandomRoute(graph.length)).limit(populationSize).toArray(int[][]::new);//size -> new int[size][]
         int[][] childPopulation = new int[population.length][];
@@ -44,7 +42,7 @@ public class Evolution
             // Mutate children
             for (int[] child : childPopulation)
             {
-                if (ThreadLocalRandom.current().nextDouble() < 0.7)
+                if (ThreadLocalRandom.current().nextDouble() < mutationProbability)
                 {
                     Main.switchNodes(child, ThreadLocalRandom.current().nextInt(child.length), ThreadLocalRandom.current().nextInt(child.length));
                 }
